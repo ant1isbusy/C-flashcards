@@ -72,8 +72,9 @@ void load_cards(const char *filename)
     fclose(file);
 }
 
-void render_text(SDL_Renderer *renderer, TTF_Font *font, SDL_Color text_color, SDL_Color bg_color, const char *text, int x, int y)
+void render_text(SDL_Renderer *renderer, TTF_Font *font, TTF_Font* small_f, SDL_Color text_color, SDL_Color bg_color, int card_num, const char *text, int x, int y)
 {
+    // card text;
     SDL_Surface *surface = TTF_RenderUTF8_LCD_Wrapped(font, text, text_color, bg_color, WIDTH - 100);
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
 
@@ -83,10 +84,29 @@ void render_text(SDL_Renderer *renderer, TTF_Font *font, SDL_Color text_color, S
         surface->w,
         surface->h};
 
-    // blend with surface;
     SDL_RenderCopy(renderer, texture, NULL, &dst);
     SDL_FreeSurface(surface);
     SDL_DestroyTexture(texture);
+
+
+    int num_x = WIDTH/2;
+    int num_y = HEIGHT - 30;
+    char num[16];
+    snprintf(num, sizeof(num), "%d/%d", current_card + 1, total_cards);
+
+    SDL_Surface *card_num_s = TTF_RenderUTF8_LCD_Wrapped(small_f, num, text_color, bg_color, 0);
+    SDL_Texture *card_num_t = SDL_CreateTextureFromSurface(renderer, card_num_s);
+
+    SDL_Rect drect = {
+        num_x - card_num_s->w/2,
+        num_y - card_num_s->h / 2,
+        card_num_s->w,
+        card_num_s->h};
+
+    // blend with surface;
+    SDL_RenderCopy(renderer, card_num_t, NULL, &drect);
+    SDL_FreeSurface(card_num_s);
+    SDL_DestroyTexture(card_num_t);
 }
 
 int main(int argc, char *argv[])
@@ -121,6 +141,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Error loading font: %s\n", TTF_GetError());
         exit(1);
     }
+    TTF_Font *small_font = TTF_OpenFont("JetBrainsMono-Medium.ttf", 20);
 
     int running = 1;
     SDL_Event event;
@@ -158,18 +179,21 @@ int main(int argc, char *argv[])
         const char *text = flipped ? cards[current_card].back : cards[current_card].front;
 
         SDL_Color bg = flipped ? (SDL_Color){0, 0, 0, 255} : (SDL_Color){255, 255, 255, 255};
-        SDL_Color text_color = flipped ? (SDL_Color){255,255,255,255} : (SDL_Color){0, 0, 0, 255};
+        SDL_Color text_color = flipped ? (SDL_Color){255, 255, 255, 255} : (SDL_Color){0, 0, 0, 255};
+
         SDL_SetRenderDrawColor(renderer, bg.r, bg.g, bg.b, 255);
         SDL_RenderClear(renderer);
-        render_text(renderer, font, text_color, bg, text, WIDTH / 2, HEIGHT / 2);
+        render_text(renderer, font, small_font, text_color, bg, current_card, text, WIDTH / 2, HEIGHT / 2);
 
         SDL_RenderPresent(renderer);
-        SDL_Delay(32);
+        SDL_Delay(128); // increase delay ~7-8 fps, more efficient
     }
 
     // cleanup
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    TTF_CloseFont(font);
+    TTF_CloseFont(small_font);
     SDL_Quit();
     freeCards();
 }
