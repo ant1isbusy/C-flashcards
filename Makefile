@@ -1,7 +1,9 @@
 
 CC = gcc
 
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra -Wpedantic
+
+LIBS = -lSDL2 -lSDL2_ttf
 
 SRC = main.c
 

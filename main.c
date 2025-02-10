@@ -1,8 +1,12 @@
-
-#include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+
+#define WIDTH 800
+#define HEIGHT 600
 
 typedef struct
 {
@@ -25,7 +29,6 @@ void freeCards()
     free(cards);
     printf("Freed all cards!\n");
 }
-
 
 void load_cards(const char *filename)
 {
@@ -50,7 +53,7 @@ void load_cards(const char *filename)
             continue;
         *tab = '\0';
 
-        // strdup copies using malloc the passed string 
+        // strdup copies using malloc the passed string
         char *front = strdup(line);
         char *back = strdup(tab + 1);
 
@@ -84,6 +87,41 @@ int main(int argc, char *argv[])
         printf("%s\n", cards[i].back);
         puts("");
     }
-    
+
+    SDL_Init(SDL_INIT_VIDEO);
+    TTF_Init();
+
+    SDL_Window *window = SDL_CreateWindow("Flashcards",
+                                          SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                          WIDTH, HEIGHT, 0);
+
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1,
+                                                SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+    TTF_Font *font = TTF_OpenFont("JetBrainsMono-Medium.ttf", 24);
+    if (!font)
+    {
+        fprintf(stderr, "Error loading font: %s\n", TTF_GetError());
+        exit(1);
+    }
+
+    int running = 1;
+    SDL_Event event;
+    while (running)
+    {
+        while (SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
+                running = 0;
+        }
+
+        SDL_RenderPresent(renderer);
+        SDL_Delay(32);
+    }
+
+    // cleanup
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
     freeCards();
 }
