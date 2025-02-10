@@ -110,7 +110,7 @@ void render_text(SDL_Renderer *renderer, TTF_Font *font, TTF_Font *small_f, SDL_
 
 void storeLastSeenCard()
 {
-    FILE *file = fopen("last_card.txt", "w");
+    FILE *file = fopen(".cache", "w");
     if (!file)
     {
         fprintf(stderr, "Couldn't open file last_card.txt\n");
@@ -122,7 +122,7 @@ void storeLastSeenCard()
 
 void loadLastSeenCard()
 {
-    FILE *file = fopen("last_card.txt", "r");
+    FILE *file = fopen(".cache", "r");
     // if file does not exist, just return
     if (!file)
         return;
