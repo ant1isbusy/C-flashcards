@@ -7,6 +7,7 @@
 
 #define WIDTH 800
 #define HEIGHT 600
+#define ITERATE_WITH_SPACE 1
 
 typedef struct
 {
@@ -169,6 +170,7 @@ int main(int argc, char *argv[])
     int running = 1;
     loadLastSeenCard();
     SDL_Event event;
+    int pressed = 0;
     while (running)
     {
         while (SDL_PollEvent(&event))
@@ -182,6 +184,14 @@ int main(int argc, char *argv[])
                 {
                 case SDLK_SPACE:
                     flipped = !flipped;
+                    if (ITERATE_WITH_SPACE)
+                        if (pressed && current_card < total_cards - 1)
+                        {
+                            current_card++;
+                            pressed = 0;
+                        }
+                        else
+                            pressed = 1;
                     break;
                 case SDLK_LEFT:
                     if (current_card > 0)
