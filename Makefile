@@ -1,0 +1,22 @@
+
+CC = gcc
+
+CFLAGS = -Wall -Wextra
+
+SRC = main.c
+
+TARGET = flashcard
+
+all: $(TARGET)
+
+$(TARGET): $(SRC)
+	$(CC) $(CFLAGS) -o $(TARGET) $(SRC) $(LIBS)
+
+
+run: $(TARGET)
+	./$(TARGET) flashcards.txt
+
+clean:
+	rm -f $(TARGET)
+
+.PHONY: all run clean
