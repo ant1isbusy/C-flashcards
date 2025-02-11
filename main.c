@@ -17,7 +17,7 @@ typedef struct
 
 Card *cards = NULL;
 size_t total_cards = 0;
-int current_card = 0;
+size_t current_card = 0;
 int flipped = 0;
 
 void freeCards()
@@ -73,7 +73,7 @@ void load_cards(const char *filename)
     fclose(file);
 }
 
-void render_text(SDL_Renderer *renderer, TTF_Font *font, TTF_Font *small_f, SDL_Color text_color, SDL_Color bg_color, int card_num, const char *text, int x, int y)
+void render_text(SDL_Renderer *renderer, TTF_Font *font, TTF_Font *small_f, SDL_Color text_color, SDL_Color bg_color, const char *text, int x, int y)
 {
     // card text;
     SDL_Surface *surface = TTF_RenderUTF8_LCD_Wrapped(font, text, text_color, bg_color, WIDTH - 100);
@@ -92,7 +92,7 @@ void render_text(SDL_Renderer *renderer, TTF_Font *font, TTF_Font *small_f, SDL_
     int num_x = WIDTH / 2;
     int num_y = HEIGHT - 30;
     char num[16];
-    snprintf(num, sizeof(num), "%d/%d", current_card + 1, total_cards);
+    snprintf(num, sizeof(num), "%ld/%ld", current_card + 1, total_cards);
 
     SDL_Surface *card_num_s = TTF_RenderUTF8_LCD_Wrapped(small_f, num, text_color, bg_color, 0);
     SDL_Texture *card_num_t = SDL_CreateTextureFromSurface(renderer, card_num_s);
@@ -117,7 +117,7 @@ void storeLastSeenCard()
         fprintf(stderr, "Couldn't open file last_card.txt\n");
         exit(1);
     }
-    fprintf(file, "%d", current_card);
+    fprintf(file, "%ld", current_card);
     fclose(file);
 }
 
@@ -129,7 +129,7 @@ void loadLastSeenCard()
         return;
 
     // otherwise we start again from that card.
-    fscanf(file, "%d", &current_card);
+    fscanf(file, "%ld", &current_card);
     fclose(file);
 }
 
@@ -141,13 +141,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    load_cards(argv[1]);
-    for (size_t i = 0; i < 2; i++)
-    {
-        printf("%s\n", cards[i].front);
-        printf("%s\n", cards[i].back);
-        puts("");
-    }
+    load_cards(argv[1]); 
 
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
@@ -185,6 +179,7 @@ int main(int argc, char *argv[])
                 case SDLK_SPACE:
                     flipped = !flipped;
                     if (ITERATE_WITH_SPACE)
+                    {
                         if (pressed && current_card < total_cards - 1)
                         {
                             current_card++;
@@ -192,6 +187,7 @@ int main(int argc, char *argv[])
                         }
                         else
                             pressed = 1;
+                    }
                     break;
                 case SDLK_LEFT:
                     if (current_card > 0)
@@ -217,7 +213,7 @@ int main(int argc, char *argv[])
 
         SDL_SetRenderDrawColor(renderer, bg.r, bg.g, bg.b, 255);
         SDL_RenderClear(renderer);
-        render_text(renderer, font, small_font, text_color, bg, current_card, text, WIDTH / 2, HEIGHT / 2);
+        render_text(renderer, font, small_font, text_color, bg,text, WIDTH / 2, HEIGHT / 2);
 
         SDL_RenderPresent(renderer);
         SDL_Delay(128); // increase delay ~7-8 fps, more efficient

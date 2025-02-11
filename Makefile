@@ -1,7 +1,7 @@
 
 CC = gcc
 
-CFLAGS = -Wall -Wextra -Wpedantic
+CFLAGS = -Wall -Wextra
 
 LIBS = -lSDL2 -lSDL2_ttf
 
