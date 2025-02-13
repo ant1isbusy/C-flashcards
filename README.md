@@ -4,8 +4,8 @@ A simple flashcard app that allows you to view flashcards, rendered in SDL2. The
 
 Designed to have a minimal aesthetic, avoiding bloat of other flashcard apps. 
 
-###### Flashcard format
-The flashcard format is very simple, it is stored as a txt, where we have front-back pairs on each line, seperated by a tab. The simplicity of it makes it great to use with LLMs to generate flashcards. (Anki can also export to this format).
+### Flashcard format
+The format is very simple, it is stored as a txt, where we have front-back pairs on each line, seperated by a tab. The simplicity of it makes it great to use with LLMs to generate flashcards. (Anki can also export to this format).
 
 
 ![Failed loading the image](preview.gif "Flashcards preview")
