@@ -98,6 +98,8 @@ void getFlashCardFiles(File **head, AppState *state)
         if (strstr(entry->d_name, ".txt") != NULL)
         {
             File *new_file = (File *)malloc(sizeof(File));
+            char *name = strchr(entry->d_name, '.');
+            *name = '\0';
             new_file->name = strdup(entry->d_name);
             new_file->next = NULL;
             state->decks.total_files++;
@@ -119,7 +121,9 @@ void printFlashCardFiles(File *head)
 void load_cards(const char *filename, AppState *state)
 {
     int total_cards = 0;
-    FILE *file = fopen(filename, "r");
+    char filename_with_extension[strlen(filename) + 5];
+    sprintf(filename_with_extension, "%s.txt", filename);
+    FILE *file = fopen(filename_with_extension, "r");
     if (!file)
     {
         fprintf(stderr, "Couldn't open file %s\n", filename);
@@ -435,7 +439,7 @@ void render(AppState *state)
 
 void cleanup(AppState *state)
 {
-     SDL_DestroyRenderer(state->renderer);
+    SDL_DestroyRenderer(state->renderer);
     SDL_DestroyWindow(state->window);
     TTF_CloseFont(state->font);
     TTF_CloseFont(state->small_font);

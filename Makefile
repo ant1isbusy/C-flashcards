@@ -16,7 +16,7 @@ $(TARGET): $(SRC)
 
 
 run: $(TARGET)
-	./$(TARGET) flashcards.txt
+	./$(TARGET)
 
 clean:
 	rm -f $(TARGET)
