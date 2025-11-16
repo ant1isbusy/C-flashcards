@@ -358,12 +358,17 @@ void handleEvents(AppState *state)
                 break;
             case SDLK_LEFT:
                 if (state->cards.current > 0)
+                {
                     state->cards.current--;
+                }
                 state->flipped = 0;
+
                 break;
             case SDLK_RIGHT:
                 if (state->cards.current < state->cards.total - 1)
+                {
                     state->cards.current++;
+                }
                 state->flipped = 0;
                 break;
             case SDLK_ESCAPE:

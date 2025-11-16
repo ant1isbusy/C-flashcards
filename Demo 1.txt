@@ -1,0 +1,7 @@
+hello	hola
+goodbye	adiós
+please	por favor
+thank you	gracias
+yes	sí
+no	no
+excuse me	perdón

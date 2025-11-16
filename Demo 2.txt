@@ -1,0 +1,24 @@
+sorry	lo siento
+good morning	buenos días
+good night	buenas noches
+man	hombre
+woman	mujer
+boy	niño
+girl	niña
+friend	amigo
+family	familia
+water	agua
+food	comida
+bathroom	baño
+help	ayuda
+where	dónde
+when	cuándo
+why	por qué
+how	cómo
+who	quién
+what	qué
+left	izquierda
+right	derecha
+today	hoy
+tomorrow	mañana
+
