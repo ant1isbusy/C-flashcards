@@ -54,10 +54,11 @@ typedef struct
     char flipped;
 } AppState;
 
+
 void freeCards(AppState *state)
 {
     Card *cards = state->cards.items;
-    for (size_t i = 0; i < state->cards.total; i++)
+    for (int i = 0; i < state->cards.total; i++)
     {
         free(cards[i].front);
         free(cards[i].back);
@@ -94,7 +95,6 @@ void getFlashCardFiles(File **head, AppState *state)
 
     while ((entry = readdir(dir)) != NULL)
     {
-        // locate substring;
         if (strstr(entry->d_name, ".txt") != NULL)
         {
             File *new_file = (File *)malloc(sizeof(File));
@@ -182,7 +182,7 @@ void render_text(SDL_Renderer *renderer, TTF_Font *font, TTF_Font *small_f, SDL_
     int num_x = WIDTH / 2;
     int num_y = HEIGHT - 30;
     char num[16];
-    snprintf(num, sizeof(num), "%ld/%ld", state->cards.current + 1, state->cards.total);
+    snprintf(num, sizeof(num), "%d/%d", state->cards.current + 1, state->cards.total);
 
     SDL_Surface *card_num_s = TTF_RenderUTF8_LCD_Wrapped(small_f, num, text_color, bg_color, 0);
     SDL_Texture *card_num_t = SDL_CreateTextureFromSurface(renderer, card_num_s);
@@ -448,7 +448,7 @@ void cleanup(AppState *state)
     freeFiles(state->decks.all_files);
 }
 
-int main(int argc, char *argv[])
+int main()
 {
     AppState state;
     init(&state);
