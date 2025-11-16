@@ -54,7 +54,6 @@ typedef struct
     char flipped;
 } AppState;
 
-
 void freeCards(AppState *state)
 {
     Card *cards = state->cards.items;
@@ -95,12 +94,12 @@ void getFlashCardFiles(File **head, AppState *state)
 
     while ((entry = readdir(dir)) != NULL)
     {
-        if (strstr(entry->d_name, ".txt") != NULL)
+        char *dot_txt_pos = strstr(entry->d_name, ".txt");
+        if (dot_txt_pos != NULL)
         {
             File *new_file = (File *)malloc(sizeof(File));
-            char *name = strchr(entry->d_name, '.');
-            *name = '\0';
-            new_file->name = strdup(entry->d_name);
+            int name_len = (int)(dot_txt_pos - entry->d_name);
+            new_file->name = strndup(entry->d_name, name_len);
             new_file->next = NULL;
             state->decks.total_files++;
             addtoLinkedList(head, new_file);
@@ -198,13 +197,14 @@ void render_text(SDL_Renderer *renderer, TTF_Font *font, TTF_Font *small_f, SDL_
     SDL_FreeSurface(card_num_s);
     SDL_DestroyTexture(card_num_t);
 }
-
-/* void storeLastSeenCard()
+/*
+void storeLastSeenCard()
 {
+    printf("Stored last seen card");
     FILE *file = fopen(".cache", "w");
     if (!file) // should never happen
     {
-        fprintf(stderr, "Couldn't open file last_card.txt\n");
+        fprintf(stderr, "Couldn't open .cache\n");
         exit(1);
     }
     fprintf(file, "%ld", current_card);
@@ -221,14 +221,13 @@ void loadLastSeenCard()
     // otherwise we start again from that card.
     fscanf(file, "%ld", &current_card);
     fclose(file);
-} */
-
+}
+ */
 File *selectionMenu(AppState *state)
 {
     if (state->decks.all_files == NULL)
     {
         fprintf(stderr, "No flashcard files found!\n");
-        // TODO: replace with window output
         exit(1);
     }
 
@@ -336,8 +335,10 @@ void handleEvents(AppState *state)
     while (SDL_PollEvent(&state->event))
     {
         if (state->event.type == SDL_QUIT)
+        {
             state->running = 0;
-
+            break;
+        }
         else if (state->event.type == SDL_KEYDOWN)
         {
             switch (state->event.key.keysym.sym)
@@ -380,10 +381,12 @@ void init(AppState *state)
     state->cards.total = 0;
     state->cards.current = 0;
     state->decks.selected = NULL;
+    state->decks.total_files = 0;
+    state->decks.all_files = NULL;
     state->cards.items = NULL;
 
     getFlashCardFiles(&state->decks.all_files, state);
-    printFlashCardFiles(state->decks.all_files);
+    // printFlashCardFiles(state->decks.all_files);
 
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
@@ -404,7 +407,7 @@ void init(AppState *state)
     }
     state->small_font = TTF_OpenFont("JetBrainsMono-Medium.ttf", 20);
 
-    // loadLastSeenCard(); TODO: see if we want to keep this, how we can adapt to multiple files.
+    // loadLastSeenCard();
     state->pressed_once = 0;
 }
 
@@ -445,6 +448,7 @@ void cleanup(AppState *state)
     TTF_CloseFont(state->small_font);
     SDL_Quit();
     freeCards(state);
+    // storeLastSeenCard();
     freeFiles(state->decks.all_files);
 }
 
