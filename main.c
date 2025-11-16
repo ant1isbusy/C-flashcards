@@ -105,6 +105,7 @@ void getFlashCardFiles(File **head, AppState *state)
             addtoLinkedList(head, new_file);
         }
     }
+    closedir(dir);
 }
 
 void printFlashCardFiles(File *head)
@@ -164,7 +165,6 @@ void load_cards(const char *filename, AppState *state)
 
 void render_text(SDL_Renderer *renderer, TTF_Font *font, TTF_Font *small_f, SDL_Color text_color, SDL_Color bg_color, const char *text, int x, int y, AppState *state)
 {
-    // card text;
     SDL_Surface *surface = TTF_RenderUTF8_LCD_Wrapped(font, text, text_color, bg_color, WIDTH - 100);
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
 
